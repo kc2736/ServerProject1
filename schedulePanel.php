@@ -10,7 +10,7 @@ if (!isset($_SESSION['loggedin'])) {
 $con = getDb();
 $extraSQL = "";
 if(isset($_SESSION['team'])){
-    $extraSQL .= ' WHERE server_schedule.hometeam = ? OR server_schedule.awayteam = ?';
+    $extraSQL .= ' WHERE server_schedule.hometeam = '. $_SESSION['team'] .' OR server_schedule.awayteam = '.$_SESSION['team'];
 }
 if(isset($_SESSION['league'])){
     if($extraSQL != ''){
@@ -30,7 +30,7 @@ $res = $con->query('SELECT server_sport.name as sport, server_league.name as lea
 if ($res->num_rows > 0) {
     $arr_users = $res->fetch_all(MYSQLI_ASSOC);
 }
-var_dump($extraSQL);
+//var_dump($extraSQL);
 ?>
 <html lang="en">
 <head>
@@ -39,6 +39,9 @@ var_dump($extraSQL);
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="css/panel.css">
+    <!--    BOOTSTRAP-->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
     <!--DataTable-->
     <link rel="stylesheet" href="libraries/DataTables-1.11.3/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css">

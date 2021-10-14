@@ -45,7 +45,16 @@ $res = $con->query("SELECT server_team.name, server_team.mascot, server_sport.na
 if ($res->num_rows > 0) {
     $arr_teams = $res->fetch_all(MYSQLI_ASSOC);
 }
-//var_dump($arr_users);
+$res = $con->query("SELECT firstname, lastname, dateofbirth, jerseynumber, server_team.name as team, p.name as position 
+                        FROM server_player
+                        LEFT JOIN server_team on server_player.team = server_team.id
+                        LEFT OUTER JOIN server_playerpos pp ON server_player.id = pp.player  
+                        LEFT OUTER JOIN server_position p ON pp.position = p.id");
+if ($res->num_rows > 0) {
+    $arr_players = $res->fetch_all(MYSQLI_ASSOC);
+}
+//var_dump($arr_players);
+//var_dump($arr_users)  ;
 ?><html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -53,6 +62,9 @@ if ($res->num_rows > 0) {
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="css/panel.css">
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
     <!--DataTable-->
     <link rel="stylesheet" href="libraries/DataTables-1.11.3/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css">
@@ -211,8 +223,39 @@ if ($res->num_rows > 0) {
         <?php } ?>
         </tbody>
     </table>
+
+    <table id="playerTable" class="display" style="width:100%">
+        <thead>
+        <th>First name</th>
+        <th>Last name</th>
+        <th>DoB</th>
+        <th>Jersy Number</th>
+        <th>Team</th>
+        <th>Position</th>
+        <th>Actions</th>
+
+        </thead>
+        <tbody>
+        <?php if(!empty($arr_players)) { ?>
+            <?php foreach($arr_players as $sls) { ?>
+                <tr>
+                    <td><?php echo $sls['firstname']; ?></td>
+                    <td><?php echo $sls['lastname']; ?></td>
+                    <td><?php echo $sls['dateofbirth']; ?></td>
+                    <td><?php echo $sls['jerseynumber']; ?></td>
+                    <td><?php echo $sls['team']; ?></td>
+                    <td><?php echo $sls['position']; ?></td>
+
+                    <td><a href=""><i class="fas fa-edit"></i></a> <a href=""><i class="fas fa-trash-alt"></i></a></td>
+                </tr>
+            <?php } ?>
+        <?php } ?>
+        </tbody>
+    </table>
+
 <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script type="text/javascript" src="libraries/DataTables-1.11.3/js/jquery.dataTables.min.js"></script>
+
     <script>
         $(document).ready(function() {
             $('#userTable').DataTable();
@@ -221,6 +264,7 @@ if ($res->num_rows > 0) {
             $('#seasonTable').DataTable();
             $('#slsTable').DataTable();
             $('#teamTable').DataTable();
+            $('#playerTable').DataTable();
         });
     </script>
 </body>
