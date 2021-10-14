@@ -1,0 +1,57 @@
+body {
+    text-align: center;
+}
+td{
+    text-align: center;
+}
+hr{
+    margin-bottom: 20px;
+    margin-top: 20px;
+}
+thead{
+    background: #5597cc;
+}
+.navtop {
+    background-color: #006d77;
+    height: 60px;
+    width: 100%;
+    border: 0;
+    margin-bottom: 15px;
+}
+.navtop div {
+    display: flex;
+    margin: 0 auto;
+    width: 1000px;
+    height: 100%;
+}
+
+.navtop div h1 {
+    flex: 1;
+    font-size: 24px;
+    padding: 0;
+    margin: 0;
+    color: #eaebed;
+    font-weight: normal;
+    display: inline-flex;
+    align-items: center;
+}
+.navtop div a {
+    padding: 0 20px;
+    text-decoration: none;
+    color: #c1c4c8;
+    font-weight: bold;
+    display: inline-flex;
+    align-items: center;
+}
+.navtop div a i {
+    padding: 2px 8px 0 0;
+}
+.navtop div a:hover {
+    color: #eaebed;
+}
+
+.adminTable{
+    /*border: solid #0c0c0c 1px;*/
+    background-color: #e0e0e0;
+    padding: 10px;
+}
