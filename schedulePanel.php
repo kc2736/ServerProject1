@@ -54,8 +54,8 @@ if ($res->num_rows > 0) {
         <?php if($_SESSION['role'] !== 5) {?>
             <a href="controlPanel.php?type=admin">Admin</a>
         <?php }?>
-        <a href="controlPanel.php?type=team">Team</a>
-        <a href="controlPanel.php?type=schedule">Schedule</a>
+        <a href="teamPanel.php">Team</a>
+        <a href="schedulePanel.php">Schedule</a>
         <a href="logout.php"><i class="fas fa-sign-out-alt"></i>Logout</a>
     </div>
 </nav>

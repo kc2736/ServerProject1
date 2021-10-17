@@ -2,9 +2,10 @@ body {
     text-align: center;
     padding: 15px;
 }
-td{
-    text-align: center;
+td, th{
+    text-align: center !important;
 }
+
 hr{
     margin-bottom: 20px;
     margin-top: 20px;

@@ -8,24 +8,47 @@ if (!isset($_SESSION['loggedin'])) {
 }
 
 $con = getDb();
-
-$res = $con->query('SELECT server_user.username, server_roles.name as role_name, server_team.name as team_name, server_league.name as league_name 
+if($_SESSION['role'] === 1) {
+    $sql = 'SELECT server_user.username, server_roles.name as role_name, server_team.name as team_name, server_league.name as league_name 
                         FROM server_user
                         LEFT JOIN server_roles ON server_user.role = server_roles.id
                         LEFT JOIN server_team ON server_user.team = server_team.id
-                        LEFT JOIN server_league ON server_user.league = server_league.id');
-if ($res->num_rows > 0) {
-    $arr_users = $res->fetch_all(MYSQLI_ASSOC);
+                        LEFT JOIN server_league ON server_user.league = server_league.id';
+
+}elseif ($_SESSION['role'] === 2){
+    $sql = 'SELECT server_user.username, server_roles.name as role_name, server_team.name as team_name, server_league.name as league_name 
+                        FROM server_user
+                        LEFT JOIN server_roles ON server_user.role = server_roles.id
+                        LEFT JOIN server_team ON server_user.team = server_team.id
+                        LEFT JOIN server_league ON server_user.league = server_league.id
+                        WHERE server_user.role > 2 AND server_user.role < 5';
+}elseif ($_SESSION['role'] === 3 || $_SESSION['role'] === 4){
+    $sql = 'SELECT server_user.username, server_roles.name as role_name, server_team.name as team_name, server_league.name as league_name 
+                        FROM server_user
+                        LEFT JOIN server_roles ON server_user.role = server_roles.id
+                        LEFT JOIN server_team ON server_user.team = server_team.id
+                        LEFT JOIN server_league ON server_user.league = server_league.id
+                        WHERE server_user.role > 2 AND server_user.team = '.$_SESSION['team'];
 }
-$res = $con->query("SELECT name FROM server_sport");
+if(isset($sql)) {
+    $res = $con->query($sql);
+    if ($res->num_rows > 0) {
+        $arr_users = $res->fetch_all(MYSQLI_ASSOC);
+    }
+}
+$res = $con->query("SELECT * FROM server_position");
+if ($res->num_rows > 0) {
+    $arr_positions = $res->fetch_all(MYSQLI_ASSOC);
+}
+$res = $con->query("SELECT * FROM server_sport");
 if ($res->num_rows > 0) {
     $arr_sports = $res->fetch_all(MYSQLI_ASSOC);
 }
-$res = $con->query("SELECT name FROM server_league");
+$res = $con->query("SELECT * FROM server_league");
 if ($res->num_rows > 0) {
     $arr_leagues = $res->fetch_all(MYSQLI_ASSOC);
 }
-$res = $con->query("SELECT year, description FROM server_season");
+$res = $con->query("SELECT id, year, description FROM server_season");
 if ($res->num_rows > 0) {
     $arr_seasons = $res->fetch_all(MYSQLI_ASSOC);
 }
@@ -37,24 +60,43 @@ $res = $con->query("SELECT server_sport.name as sport, server_league.name as lea
 if ($res->num_rows > 0) {
     $arr_sls = $res->fetch_all(MYSQLI_ASSOC);
 }
-$res = $con->query("SELECT server_team.name, server_team.mascot, server_sport.name as sport, server_league.name as league, server_season.year as season, server_team.picture, server_team.homecolor, server_team.awaycolor, server_team.maxplayers 
+if ($_SESSION['role'] === 2){
+    $sql = "SELECT server_team.name, server_team.mascot, server_sport.name as sport, server_league.name as league, server_season.year as season, server_team.picture, server_team.homecolor, server_team.awaycolor, server_team.maxplayers 
                         FROM server_team
                         LEFT JOIN server_sport ON server_team.sport = server_sport.id
                         LEFT JOIN server_league ON server_team.league = server_league.id
-                        LEFT JOIN server_season ON server_team.season = server_season.id");
+                        LEFT JOIN server_season ON server_team.season = server_season.id
+                        WHERE server_team.league = ". $_SESSION['league'];
+}else{
+    $sql = 'SELECT server_team.name, server_team.mascot, server_sport.name as sport, server_league.name as league, server_season.year as season, server_team.picture, server_team.homecolor, server_team.awaycolor, server_team.maxplayers 
+                        FROM server_team
+                        LEFT JOIN server_sport ON server_team.sport = server_sport.id
+                        LEFT JOIN server_league ON server_team.league = server_league.id
+                        LEFT JOIN server_season ON server_team.season = server_season.id';
+}
+$res = $con->query($sql);
 if ($res->num_rows > 0) {
     $arr_teams = $res->fetch_all(MYSQLI_ASSOC);
 }
-$res = $con->query("SELECT firstname, lastname, dateofbirth, jerseynumber, server_team.name as team, p.name as position 
+if($_SESSION['role'] === 3 || $_SESSION['role'] === 4){
+    $sql = "SELECT firstname, lastname, dateofbirth, jerseynumber, server_team.name as team, p.name as position 
                         FROM server_player
                         LEFT JOIN server_team on server_player.team = server_team.id
                         LEFT OUTER JOIN server_playerpos pp ON server_player.id = pp.player  
-                        LEFT OUTER JOIN server_position p ON pp.position = p.id");
+                        LEFT OUTER JOIN server_position p ON pp.position = p.id
+                        WHERE team = ".$_SESSION['team'];
+}else{
+    $sql = "SELECT firstname, lastname, dateofbirth, jerseynumber, server_team.name as team, p.name as position 
+                        FROM server_player
+                        LEFT JOIN server_team on server_player.team = server_team.id
+                        LEFT OUTER JOIN server_playerpos pp ON server_player.id = pp.player  
+                        LEFT OUTER JOIN server_position p ON pp.position = p.id";
+}
+$res = $con->query($sql);
 if ($res->num_rows > 0) {
     $arr_players = $res->fetch_all(MYSQLI_ASSOC);
 }
-//var_dump($arr_players);
-//var_dump($arr_users)  ;
+
 ?><html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -77,12 +119,15 @@ if ($res->num_rows > 0) {
             <?php if($_SESSION['role'] === 1) {?>
             <a href="controlPanel.php?type=admin">Admin</a>
             <?php }?>
-            <a href="controlPanel.php?type=team">Team</a>
+            <?php if($_SESSION['role'] != 1 && $_SESSION['role'] != 2) {?>
+            <a href="teamPanel.php">Team</a>
+            <?php }?>
             <a href="schedulePanel.php">Schedule</a>
             <a href="logout.php"><i class="fas fa-sign-out-alt"></i>Logout</a>
         </div>
     </nav>
 <!--    <div class="adminTable">-->
+    <?php if(isset($arr_users)){?>
         <table id="userTable" class="display" style="width:100%">
             <thead>
             <th>Username</th>
@@ -105,10 +150,12 @@ if ($res->num_rows > 0) {
             <?php } ?>
             </tbody>
         </table>
+        <hr>
+    <?php }?>
 <!--    </div>-->
 
-    <hr>
 
+    <?php if($_SESSION['role'] === 1){?>
     <table id="sportTable" class="display" style="width:100%">
         <thead>
         <th>Sport</th>
@@ -125,9 +172,10 @@ if ($res->num_rows > 0) {
         <?php } ?>
         </tbody>
     </table>
+        <hr>
+    <?php }?>
 
-    <hr>
-
+    <?php if($_SESSION['role'] === 1){?>
     <table id="leagueTable" class="display" style="width:100%">
         <thead>
         <th>League</th>
@@ -146,7 +194,9 @@ if ($res->num_rows > 0) {
     </table>
 
     <hr>
-
+    <?php }
+    if($_SESSION['role'] <= 2){
+    ?>
     <table id="seasonTable" class="display" style="width:100%">
         <thead>
         <th>Season</th>
@@ -167,7 +217,9 @@ if ($res->num_rows > 0) {
     </table>
 
     <hr>
-
+    <?php }
+    if($_SESSION['role'] <= 2){
+    ?>
     <table id="slsTable" class="display" style="width:100%">
         <thead>
         <th>Sport</th>
@@ -190,7 +242,7 @@ if ($res->num_rows > 0) {
     </table>
 
     <hr>
-
+    <?php }?>
     <table id="teamTable" class="display" style="width:100%">
         <thead>
         <th>Name</th>
@@ -223,7 +275,7 @@ if ($res->num_rows > 0) {
         <?php } ?>
         </tbody>
     </table>
-
+    <?php if($_SESSION['role'] === 1 || $_SESSION['role'] === 3 || $_SESSION['role'] === 4){?>
     <table id="playerTable" class="display" style="width:100%">
         <thead>
         <th>First name</th>
@@ -252,7 +304,27 @@ if ($res->num_rows > 0) {
         <?php } ?>
         </tbody>
     </table>
+    <?php }?>
 
+    <?php if($_SESSION['role'] === 3 || $_SESSION['role'] === 4 || $_SESSION['role'] === 1){?>
+    <table id="positionTable" class="display" style="width:100%">
+        <thead>
+        <th>Sport</th>
+        <th>Actions</th>
+        </thead>
+        <tbody>
+        <?php if(!empty($arr_positions)) { ?>
+            <?php foreach($arr_positions as $position) { ?>
+                <tr>
+                    <td><?php echo $position['name']; ?></td>
+                    <td><a href=""><i class="fas fa-trash-alt"></i></a></td>
+                </tr>
+            <?php } ?>
+        <?php } ?>
+        </tbody>
+    </table>
+    <hr>
+    <?php }?>
 <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script type="text/javascript" src="libraries/DataTables-1.11.3/js/jquery.dataTables.min.js"></script>
 
@@ -265,6 +337,7 @@ if ($res->num_rows > 0) {
             $('#slsTable').DataTable();
             $('#teamTable').DataTable();
             $('#playerTable').DataTable();
+            $('#positionTable').DataTable();
         });
     </script>
 </body>
