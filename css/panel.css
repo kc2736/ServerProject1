@@ -57,3 +57,7 @@ thead{
     background-color: #e0e0e0;
     padding: 10px;
 }
+.addButton{
+    display: flex;
+    margin: auto;
+}

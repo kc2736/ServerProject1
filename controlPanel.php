@@ -116,7 +116,7 @@ if ($res->num_rows > 0) {
     <nav class="navtop">
         <div>
             <h1>Sports manager</h1>
-            <?php if($_SESSION['role'] === 1) {?>
+            <?php if($_SESSION['role'] != 5) {?>
             <a href="controlPanel.php?type=admin">Admin</a>
             <?php }?>
             <?php if($_SESSION['role'] != 1 && $_SESSION['role'] != 2) {?>
@@ -129,6 +129,7 @@ if ($res->num_rows > 0) {
 <!--    <div class="adminTable">-->
     <?php if(isset($arr_users)){?>
         <table id="userTable" class="display" style="width:100%">
+            <button class="addButton" onclick="window.location.href = 'addView.php?table=server_user'">Add new User</button>
             <thead>
             <th>Username</th>
             <th>Role</th>
@@ -157,6 +158,7 @@ if ($res->num_rows > 0) {
 
     <?php if($_SESSION['role'] === 1){?>
     <table id="sportTable" class="display" style="width:100%">
+        <button class="addButton" onclick="window.location.href = 'addView.php?table=server_sport'">Add new Sport</button>
         <thead>
         <th>Sport</th>
         <th>Actions</th>
@@ -177,6 +179,7 @@ if ($res->num_rows > 0) {
 
     <?php if($_SESSION['role'] === 1){?>
     <table id="leagueTable" class="display" style="width:100%">
+        <button class="addButton" onclick="window.location.href = 'addView.php?table=server_league'">Add new League</button>
         <thead>
         <th>League</th>
         <th>Actions</th>
@@ -198,6 +201,7 @@ if ($res->num_rows > 0) {
     if($_SESSION['role'] <= 2){
     ?>
     <table id="seasonTable" class="display" style="width:100%">
+        <button class="addButton" onclick="window.location.href = 'addView.php?table=server_season'">Add new Season</button>
         <thead>
         <th>Season</th>
         <th>Description</th>
@@ -221,6 +225,7 @@ if ($res->num_rows > 0) {
     if($_SESSION['role'] <= 2){
     ?>
     <table id="slsTable" class="display" style="width:100%">
+        <button class="addButton" onclick="window.location.href = 'addView.php?table=server_slseason'">Add new Sport/League/Season</button>
         <thead>
         <th>Sport</th>
         <th>League</th>
@@ -244,6 +249,7 @@ if ($res->num_rows > 0) {
     <hr>
     <?php }?>
     <table id="teamTable" class="display" style="width:100%">
+        <button class="addButton" onclick="window.location.href = 'addView.php?table=server_team'">Add new Team</button>
         <thead>
         <th>Name</th>
         <th>Mascot</th>
@@ -277,6 +283,7 @@ if ($res->num_rows > 0) {
     </table>
     <?php if($_SESSION['role'] === 1 || $_SESSION['role'] === 3 || $_SESSION['role'] === 4){?>
     <table id="playerTable" class="display" style="width:100%">
+        <button class="addButton" onclick="window.location.href = 'addView.php?table=server_player'">Add new Player</button>
         <thead>
         <th>First name</th>
         <th>Last name</th>
@@ -308,6 +315,7 @@ if ($res->num_rows > 0) {
 
     <?php if($_SESSION['role'] === 3 || $_SESSION['role'] === 4 || $_SESSION['role'] === 1){?>
     <table id="positionTable" class="display" style="width:100%">
+        <button class="addButton" onclick="window.location.href = 'addView.php?table=server_position'">Add new Position</button>
         <thead>
         <th>Sport</th>
         <th>Actions</th>
@@ -324,6 +332,7 @@ if ($res->num_rows > 0) {
         </tbody>
     </table>
     <hr>
+
     <?php }?>
 <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script type="text/javascript" src="libraries/DataTables-1.11.3/js/jquery.dataTables.min.js"></script>
@@ -340,5 +349,6 @@ if ($res->num_rows > 0) {
             $('#positionTable').DataTable();
         });
     </script>
+
 </body>
 </html>

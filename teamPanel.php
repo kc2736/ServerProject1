@@ -13,11 +13,23 @@ $sql = $sql = "SELECT server_team.name, server_team.mascot, server_sport.name as
                         LEFT JOIN server_sport ON server_team.sport = server_sport.id
                         LEFT JOIN server_league ON server_team.league = server_league.id
                         LEFT JOIN server_season ON server_team.season = server_season.id
-                        WHERE server_team.team = ". $_SESSION['team'];
+                        WHERE server_team.id = ". $_SESSION['team'];
+//var_dump($_SESSION);
 $res = $con->query($sql);
 if ($res->num_rows > 0) {
-    $arr_users = $res->fetch_all(MYSQLI_ASSOC);
+    $arr_teams = $res->fetch_all(MYSQLI_ASSOC);
 }
+$sql = "SELECT firstname, lastname, dateofbirth, jerseynumber, server_team.name as team, p.name as position 
+                        FROM server_player
+                        LEFT JOIN server_team on server_player.team = server_team.id
+                        LEFT OUTER JOIN server_playerpos pp ON server_player.id = pp.player  
+                        LEFT OUTER JOIN server_position p ON pp.position = p.id
+                        WHERE team = ".$_SESSION['team'];
+$res = $con->query($sql);
+if ($res->num_rows > 0) {
+    $arr_players = $res->fetch_all(MYSQLI_ASSOC);
+}
+
 //var_dump($extraSQL);
 ?>
 <html lang="en">
@@ -47,34 +59,60 @@ if ($res->num_rows > 0) {
         <a href="logout.php"><i class="fas fa-sign-out-alt"></i>Logout</a>
     </div>
 </nav>
-<!--    <div class="adminTable">-->
-<table id="scheduleTable" class="display" style="width:100%">
+<table id="teamTable" class="display" style="width:100%">
     <thead>
+    <th>Name</th>
+    <th>Mascot</th>
     <th>Sport</th>
     <th>League</th>
     <th>Season</th>
-    <th>Home Team</th>
-    <th>Away Team</th>
-    <th>Home score</th>
-    <th>Away score</th>
-    <th>Scheduel</th>
-    <th>Completed</th>
-    <th>Actions</th>
+    <th>Picture</th>
+    <th>Home color</th>
+    <th>Away color</th>
+    <th>Max Players</th>
     </thead>
     <tbody>
-    <?php if(!empty($arr_users)) { ?>
-        <?php foreach($arr_users as $user) { ?>
+    <?php if(!empty($arr_teams)) { ?>
+        <?php foreach($arr_teams as $sls) { ?>
             <tr>
-                <td><?php echo $user['sport']; ?></td>
-                <td><?php echo $user['league']; ?></td>
-                <td><?php echo $user['season']; ?></td>
-                <td><?php echo $user['hometeam']; ?></td>
-                <td><?php echo $user['awayteam']; ?></td>
-                <td><?php echo $user['homescore']; ?></td>
-                <td><?php echo $user['awayscore']; ?></td>
-                <td><?php echo $user['scheduled']; ?></td>
-                <td><?php if($user['completed'] === "1"){echo "Finished";}else{echo "Scheduled";}?></td>
-                <td><a href=""><i class="fas fa-edit"></i></a> <a href=""><i class="fas fa-trash-alt"></i></a></td>
+                <td><?php echo $sls['name']; ?></td>
+                <td><?php echo $sls['mascot']; ?></td>
+                <td><?php echo $sls['sport']; ?></td>
+                <td><?php echo $sls['league']; ?></td>
+                <td><?php echo $sls['season']; ?></td>
+                <td><?php echo $sls['picture']; ?></td>
+                <td><?php echo $sls['homecolor']; ?></td>
+                <td><?php echo $sls['awaycolor']; ?></td>
+                <td><?php echo $sls['maxplayers']; ?></td>
+            </tr>
+        <?php } ?>
+    <?php } ?>
+    </tbody>
+</table>
+
+<hr>
+
+<table id="playerTable" class="display" style="width:100%">
+    <thead>
+    <th>First name</th>
+    <th>Last name</th>
+    <th>DoB</th>
+    <th>Jersy Number</th>
+    <th>Team</th>
+    <th>Position</th>
+
+    </thead>
+    <tbody>
+    <?php if(!empty($arr_players)) { ?>
+        <?php foreach($arr_players as $sls) { ?>
+            <tr>
+                <td><?php echo $sls['firstname']; ?></td>
+                <td><?php echo $sls['lastname']; ?></td>
+                <td><?php echo $sls['dateofbirth']; ?></td>
+                <td><?php echo $sls['jerseynumber']; ?></td>
+                <td><?php echo $sls['team']; ?></td>
+                <td><?php echo $sls['position']; ?></td>
+
             </tr>
         <?php } ?>
     <?php } ?>
@@ -86,6 +124,7 @@ if ($res->num_rows > 0) {
 <script>
     $(document).ready(function() {
         $('#teamTable').DataTable();
+        $('#playerTable').DataTable();
     });
 </script>
 
