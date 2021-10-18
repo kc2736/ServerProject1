@@ -36,7 +36,6 @@ $res = $con->query("SELECT * FROM server_position");
 if ($res->num_rows > 0) {
     $arr_positions = $res->fetch_all(MYSQLI_ASSOC);
 }
-
 ?><html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -209,7 +208,7 @@ if ($res->num_rows > 0) {
     <?php
     if ($_GET['table'] === 'server_team' && $_SESSION['role'] != 5){
         ?>
-        <form action="addEntry.php" method="post" id="seasonForm">
+        <form action="addEntry.php" method="post" id="teamForm">
             <input type="text" value="<?=$_GET['table']?>" name="tableName" hidden>
             <label for="name">Team name: </label>
             <input type="text" name="name" placeholder="ex. Hajduk"><br>
@@ -219,15 +218,19 @@ if ($res->num_rows > 0) {
             <input type="text" name="mascot" placeholder="ex. Fox"><br>
             <br>
 
-            <label for="slseasonInput">Sport/League/Season:</label>
-            <input type="text" name="slseasonInput" hidden>
-            <select name="slseason" id="slseasonSelect">
+            <input type="text" name="sport" hidden>
+            <input type="text" name="league" hidden>
+            <input type="text" name="season" hidden>
+
+            <label for="fake">Sport/League/Season:</label>
+            <select name="fake" id="slseasonSelect">
                 <?php
 
                 foreach($arr_sls as $sls){
 
                     ?>
-                    <option value="<?php echo($sls['sport']. "/" .$sls['league'] ."/". $sls['season']);?>"><?php echo($arr_sports[$sls['sport']]['name'] ."/".$arr_leagues[$sls['league']]['name']."/".$arr_seasons[$sls['season']]['year'])?></option>
+
+                    <option value="<?php echo($sls['sport']. "/" .$sls['league'] ."/". $sls['season']);?>"><?php echo($arr_sports[$sls['sport']-1]['name'] ."/".$arr_leagues[$sls['league']-1]['name']."/".$arr_seasons[$sls['season']-1]['year'])?></option>
                     <?php
                 }
                 ?>
@@ -250,7 +253,7 @@ if ($res->num_rows > 0) {
             <input type="number" name="maxplayers" placeholder="ex. 11"><br>
             <br>
 
-            <button type="submit">Add to database</button>
+            <button type="submit" onclick="submitSLS()">Add to database</button>
         </form>
         <?php
     }
@@ -289,8 +292,8 @@ if ($res->num_rows > 0) {
             </select>
             <br>
 
-            <label for="leagueInput">Position:</label>
-            <select name="role" id="roleSelect">
+            <label for="position">Position:</label>
+            <select name="position" id="roleSelect">
                 <?php
                 foreach($arr_positions as $position){
                     ?>
@@ -318,7 +321,17 @@ if ($res->num_rows > 0) {
         <?php
     }
     ?>
-
+    <script>
+        function submitSLS() {
+            var selValue = document.getElementById('slseasonSelect').value;
+            selValue = selValue.split('/');
+            document.getElementsByName('sport')[0].value = selValue[0];
+            document.getElementsByName('league')[0].value = selValue[1];
+            document.getElementsByName('season')[0].value = selValue[2];
+            // console.log(document.getElementsByName('season')[0].value);
+            document.getElementById('playerForm').submit();
+        }
+    </script>
 
 </body>
 </html>

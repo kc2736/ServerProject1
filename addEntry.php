@@ -8,6 +8,7 @@ if (!isset($_SESSION['loggedin'])) {
 }
 $intColumns = array('id','jerseynumber','sport','league','season','team','player','position','hometeam', 'awayteam','homescore', 'awayscore','completed','year','maxplayers','role');
 $tableName = $_POST['tableName'];
+if(isset($_POST['fake'])) unset($_POST['fake']);
 unset($_POST['tableName']);
 $sql = "INSERT INTO ".$tableName." ";
 $columns = "(";
@@ -50,3 +51,4 @@ if($con->query($sql) === true){
 }
 //var_dump($sql);
 $con->close();
+header('Location: /index.php');

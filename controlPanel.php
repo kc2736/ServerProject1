@@ -61,14 +61,14 @@ if ($res->num_rows > 0) {
     $arr_sls = $res->fetch_all(MYSQLI_ASSOC);
 }
 if ($_SESSION['role'] === 2){
-    $sql = "SELECT server_team.name, server_team.mascot, server_sport.name as sport, server_league.name as league, server_season.year as season, server_team.picture, server_team.homecolor, server_team.awaycolor, server_team.maxplayers 
+    $sql = "SELECT server_team.id, server_team.name, server_team.mascot, server_sport.name as sport, server_league.name as league, server_season.year as season, server_team.picture, server_team.homecolor, server_team.awaycolor, server_team.maxplayers 
                         FROM server_team
                         LEFT JOIN server_sport ON server_team.sport = server_sport.id
                         LEFT JOIN server_league ON server_team.league = server_league.id
                         LEFT JOIN server_season ON server_team.season = server_season.id
                         WHERE server_team.league = ". $_SESSION['league'];
 }else{
-    $sql = 'SELECT server_team.name, server_team.mascot, server_sport.name as sport, server_league.name as league, server_season.year as season, server_team.picture, server_team.homecolor, server_team.awaycolor, server_team.maxplayers 
+    $sql = 'SELECT server_team.id, server_team.name, server_team.mascot, server_sport.name as sport, server_league.name as league, server_season.year as season, server_team.picture, server_team.homecolor, server_team.awaycolor, server_team.maxplayers 
                         FROM server_team
                         LEFT JOIN server_sport ON server_team.sport = server_sport.id
                         LEFT JOIN server_league ON server_team.league = server_league.id
@@ -79,14 +79,14 @@ if ($res->num_rows > 0) {
     $arr_teams = $res->fetch_all(MYSQLI_ASSOC);
 }
 if($_SESSION['role'] === 3 || $_SESSION['role'] === 4){
-    $sql = "SELECT firstname, lastname, dateofbirth, jerseynumber, server_team.name as team, p.name as position 
+    $sql = "SELECT server_player.id, firstname, lastname, dateofbirth, jerseynumber, server_team.name as team, p.name as position 
                         FROM server_player
                         LEFT JOIN server_team on server_player.team = server_team.id
                         LEFT OUTER JOIN server_playerpos pp ON server_player.id = pp.player  
                         LEFT OUTER JOIN server_position p ON pp.position = p.id
                         WHERE team = ".$_SESSION['team'];
 }else{
-    $sql = "SELECT firstname, lastname, dateofbirth, jerseynumber, server_team.name as team, p.name as position 
+    $sql = "SELECT server_player.id, firstname, lastname, dateofbirth, jerseynumber, server_team.name as team, p.name as position 
                         FROM server_player
                         LEFT JOIN server_team on server_player.team = server_team.id
                         LEFT OUTER JOIN server_playerpos pp ON server_player.id = pp.player  
@@ -145,7 +145,7 @@ if ($res->num_rows > 0) {
                         <td><?php echo $user['role_name']; ?></td>
                         <td><?php echo $user['team_name']; ?></td>
                         <td><?php echo $user['league_name']; ?></td>
-                        <td><a href=""><i class="fas fa-edit"></i></a> <a href=""><i class="fas fa-trash-alt"></i></a></td>
+                        <td><a href=""><i class="fas fa-edit"></i></a> <button class="btn" onclick="removeEvent(<?php echo("'server_user', 'username',  '". $user['username']."', 'userTable'")?>)"><i class="fas fa-trash-alt"></i></button></td>
                     </tr>
                 <?php } ?>
             <?php } ?>
@@ -168,7 +168,7 @@ if ($res->num_rows > 0) {
             <?php foreach($arr_sports as $sport) { ?>
                 <tr>
                     <td><?php echo $sport['name']; ?></td>
-                    <td><a href=""><i class="fas fa-edit"></i></a> <a href=""><i class="fas fa-trash-alt"></i></a></td>
+                    <td><a href=""><i class="fas fa-edit"></i></a> <button class="btn" onclick="removeEvent(<?php echo("'server_sport', 'id',  '". $sport['id']."', 'sportTable'")?>)"><i class="fas fa-trash-alt"></i></button></td>
                 </tr>
             <?php } ?>
         <?php } ?>
@@ -189,7 +189,7 @@ if ($res->num_rows > 0) {
             <?php foreach($arr_leagues as $league) { ?>
                 <tr>
                     <td><?php echo $league['name']; ?></td>
-                    <td><a href=""><i class="fas fa-edit"></i></a> <a href=""><i class="fas fa-trash-alt"></i></a></td>
+                    <td><a href=""><i class="fas fa-edit"></i></a> <button class="btn" onclick="removeEvent(<?php echo("'server_league', 'id',  '". $league['id']."', 'leagueTable'")?>)"><i class="fas fa-trash-alt"></i></button></td>
                 </tr>
             <?php } ?>
         <?php } ?>
@@ -213,7 +213,7 @@ if ($res->num_rows > 0) {
                 <tr>
                     <td><?php echo $season['year']; ?></td>
                     <td><?php echo $season['description']; ?></td>
-                    <td><a href=""><i class="fas fa-edit"></i></a> <a href=""><i class="fas fa-trash-alt"></i></a></td>
+                    <td><a href=""><i class="fas fa-edit"></i></a> <button class="btn" onclick="removeEvent(<?php echo("'server_season', 'id',  '". $season['id']."', 'seasonTable'")?>)"><i class="fas fa-trash-alt"></i></button></td>
                 </tr>
             <?php } ?>
         <?php } ?>
@@ -275,7 +275,7 @@ if ($res->num_rows > 0) {
                     <td><?php echo $sls['homecolor']; ?></td>
                     <td><?php echo $sls['awaycolor']; ?></td>
                     <td><?php echo $sls['maxplayers']; ?></td>
-                    <td><a href=""><i class="fas fa-edit"></i></a> <a href=""><i class="fas fa-trash-alt"></i></a></td>
+                    <td><a href=""><i class="fas fa-edit"></i></a> <button class="btn" onclick="removeEvent(<?php echo("'server_team', 'id',  '". $sls['id']."', 'teamTable'")?>)"><i class="fas fa-trash-alt"></i></button></td>
                 </tr>
             <?php } ?>
         <?php } ?>
@@ -305,7 +305,7 @@ if ($res->num_rows > 0) {
                     <td><?php echo $sls['team']; ?></td>
                     <td><?php echo $sls['position']; ?></td>
 
-                    <td><a href=""><i class="fas fa-edit"></i></a> <a href=""><i class="fas fa-trash-alt"></i></a></td>
+                    <td><a href=""><i class="fas fa-edit"></i></a> <button class="btn" onclick="removeEvent(<?php echo("'server_player', 'id',  '". $sls['id']."', 'playerTable'")?>)"><i class="fas fa-trash-alt"></i></button></td>
                 </tr>
             <?php } ?>
         <?php } ?>
@@ -325,7 +325,7 @@ if ($res->num_rows > 0) {
             <?php foreach($arr_positions as $position) { ?>
                 <tr>
                     <td><?php echo $position['name']; ?></td>
-                    <td><a href=""><i class="fas fa-trash-alt"></i></a></td>
+                    <td><button class="btn" onclick="removeEvent(<?php echo("'server_position', 'id',  '". $position['id']."', 'positionTable'")?>)"><i class="fas fa-trash-alt"></i></button></td>
                 </tr>
             <?php } ?>
         <?php } ?>
@@ -334,6 +334,12 @@ if ($res->num_rows > 0) {
     <hr>
 
     <?php }?>
+    <form action="removeEntry.php" method="post" id="removeForm">
+        <input type="text" name="tableName" hidden>
+        <input type="text" name="key" hidden>
+        <input type="text" name="id" hidden>
+        <button type="submit" hidden></button>
+    </form>
 <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script type="text/javascript" src="libraries/DataTables-1.11.3/js/jquery.dataTables.min.js"></script>
 
@@ -348,6 +354,14 @@ if ($res->num_rows > 0) {
             $('#playerTable').DataTable();
             $('#positionTable').DataTable();
         });
+
+        function removeEvent(table, key, id, formName){
+            console.log(formName);
+            document.getElementsByName('tableName')[0].value = table;
+            document.getElementsByName('key')[0].value = key;
+            document.getElementsByName('id')[0].value = id;
+            document.getElementById('removeForm').submit();
+        }
     </script>
 
 </body>
