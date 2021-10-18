@@ -145,7 +145,7 @@ if ($res->num_rows > 0) {
                         <td><?php echo $user['role_name']; ?></td>
                         <td><?php echo $user['team_name']; ?></td>
                         <td><?php echo $user['league_name']; ?></td>
-                        <td><a href=""><i class="fas fa-edit"></i></a> <button class="btn" onclick="removeEvent(<?php echo("'server_user', 'username',  '". $user['username']."', 'userTable'")?>)"><i class="fas fa-trash-alt"></i></button></td>
+                        <td><a href="editView.php?table=server_user&id=<?=$user['username']?>"><i class="fas fa-edit"></i></a> <button class="btn" onclick="removeEvent(<?php echo("'server_user', 'username',  '". $user['username']."', 'userTable'")?>)"><i class="fas fa-trash-alt"></i></button></td>
                     </tr>
                 <?php } ?>
             <?php } ?>
